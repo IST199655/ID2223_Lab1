@@ -19,8 +19,8 @@ jobs:
 
     - name: Install dependencies
       run: |
-        pip install -r requirements.txt
+        pip install -r .github/workflows/requirements.txt
 
     - name: Download and update weather and air quality data
       run: |
-        python update_data.py  
+        python .github/workflows/update_data.py  
