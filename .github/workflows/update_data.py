@@ -7,10 +7,11 @@ import os
 
 ## GET THE AIR QUALITY FORECAST FOR THE NEXT DAYS 
 
-aqi_api_key_file = '../../data/aqi-api-key.txt'
+# Get the API key from GitHub Secrets
+AQI_API_KEY = os.getenv('AQI_API_KEY')
 
-with open(aqi_api_key_file, 'r') as file:
-    AQI_API_KEY = file.read().rstrip()
+if AQI_API_KEY is None:
+    raise ValueError("API key is missing. Set it in GitHub Secrets.")
 
 # TODO: Change these values to point to your Sensor
 country="sweden"
