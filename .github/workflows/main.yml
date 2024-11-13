@@ -23,4 +23,4 @@ jobs:
 
     - name: Download and update weather and air quality data
       run: |
-        python update_data.py  # Your script to download and register data
+        python update_data.py  
