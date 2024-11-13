@@ -1,0 +1,26 @@
+name: Daily Data Weather Pipeline
+
+jobs:
+  update_data:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python environment
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Set environment variable for AQI API key
+        run: |
+          echo "AQI_API_KEY=${{ secrets.HOPSWORKS_API_KEY }}" >> $GITHUB_ENV
+
+      - name: Download and update weather and air quality data
+        run: |
+          python update_data.py
+
