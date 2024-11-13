@@ -3,15 +3,25 @@ import requests
 import pandas as pd
 import hopsworks
 import os
+import warnings
 
 
-## GET THE AIR QUALITY FORECAST FOR THE NEXT DAYS 
+## GET THE AIR QUALITY FORECAST FOR THE NEXT DAYS
 
-# Get the API key from GitHub Secrets
-AQI_API_KEY = os.getenv('AQI_API_KEY')
+# Here aqi key is not a secret 
 
-if AQI_API_KEY is None:
-    raise ValueError("API key is missing. Set it in GitHub Secrets.")
+aqi_api_key_file = 'aqi-api-key.txt'
+
+with open(aqi_api_key_file, 'r') as file:
+    AQI_API_KEY = file.read().rstrip()
+
+## Here it is
+
+# # Get the API key from GitHub Secrets
+# AQI_API_KEY = os.getenv('AQI_API_KEY')
+
+# if AQI_API_KEY is None:
+# raise ValueError("API key is missing. Set it in GitHub Secrets.")
 
 # TODO: Change these values to point to your Sensor
 country="sweden"
@@ -77,9 +87,6 @@ df_forecast_weather = pd.DataFrame({
 })
 
 # UPDATE THE FEATURE GROUPS
-
-with open('../../data/hopsworks-api-key.txt', 'r') as file:
-        os.environ["HOPSWORKS_API_KEY"] = file.read().rstrip()
 
 project = hopsworks.login(project = "ID2223LAB1KTH")
 
