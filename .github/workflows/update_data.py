@@ -4,6 +4,7 @@ import pandas as pd
 import hopsworks
 import os
 import warnings
+from functions import util
 
 
 ## GET THE AIR QUALITY FORECAST FOR THE NEXT DAYS
@@ -26,9 +27,6 @@ conn = hopsworks.connection(host="c.app.hopsworks.ai", project=proj, api_key_val
 secrets = conn.get_secrets_api()
 
 AQI_API_KEY = secrets.get_secret("AQI_API_KEY").value
-
-
-
 
 
 country="sweden"
@@ -57,10 +55,10 @@ if response.status_code == 200:
     
 
     df_forecast_aq = pm25_df.merge(pm10_df, on="day", how="inner").drop(index=0)
-    df_forecast_aq[['pm25', 'pm10']] = df_forecast_aq[['pm25', 'pm10']].astype(str)
+    df_forecast_aq[['pm25', 'pm10']] = df_forecast_aq[['pm25', 'pm10']].astype(int)
    
     df_forecast_aq['day'] = pd.to_datetime(df_forecast_aq['day'])
-    df_forecast_aq.rename(columns={'day': 'time'}, inplace=True)
+    df_forecast_aq.rename(columns={'day': 'date'}, inplace=True)
 
 
 ## GET THE WEATHER FORECAST FOR THE NEXT DAYS 
@@ -74,24 +72,25 @@ today = datetime.today().date()
 forecast_start_date = today - timedelta(days=1)
 forecast_end_date = today + timedelta(days=5)  # 7 days from today
 
-# URL for Open Meteo forecast
-forecast_url = f"https://api.open-meteo.com/v1/forecast?latitude={latitude}&longitude={longitude}&start_date={forecast_start_date}&end_date={forecast_end_date}&hourly=temperature_2m,relative_humidity_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m"
+df_forecast_weather = util.get_hourly_weather_forecast(city, latitude, longitude)
 
-# Request the forecast data
-response = requests.get(forecast_url)
-forecast_data = response.json()
+df_forecast_weather['date'] = df_forecast_weather['date'].dt.date
 
-# Convert to DataFrame
-df_forecast_weather = pd.DataFrame({
-    "time": pd.to_datetime(forecast_data["hourly"]["time"]),
-    "temperature_2m": forecast_data["hourly"]["temperature_2m"],
-    "relative_humidity_2m": forecast_data["hourly"]["relative_humidity_2m"],
-    "wind_speed_10m": forecast_data["hourly"]["wind_speed_10m"],
-    "wind_direction_10m": forecast_data["hourly"]["wind_direction_10m"],
-    "wind_gusts_10m": forecast_data["hourly"]["wind_gusts_10m"]
-})
+df_forecast_weather['date'] = pd.to_datetime(df_forecast_weather['date'])
 
-# UPDATE THE FEATURE GROUPS
+# Group by the new 'day' column and calculate the daily average for each feature
+df_forecast_weather = df_forecast_weather.groupby('date').agg({
+    'temperature_2m_mean': 'mean',
+    'precipitation_sum': 'mean',
+    'wind_speed_10m_max': 'mean',
+    'wind_direction_10m_dominant': 'mean'
+}).reset_index()
+
+df_forecast_weather = df_forecast_weather.drop(index=[9,8,7])
+
+
+
+# # UPDATE THE FEATURE GROUPS
 
 fs = proj.get_feature_store()
 
