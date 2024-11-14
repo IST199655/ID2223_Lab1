@@ -1,13 +1,19 @@
-name: Daily Data Weather Pipeline
+name: Update Air Quality and Weather Forecast
+
+on:
+  schedule:
+    - cron: '0 6 * * *'  # Exécuter tous les jours à 6h00 UTC
+  workflow_dispatch:      # Permet aussi de déclencher manuellement
 
 jobs:
-  update_data:
+  update_forecast:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up Python environment
+      - name: Set up Python
         uses: actions/setup-python@v2
         with:
           python-version: '3.8'
@@ -16,11 +22,10 @@ jobs:
         run: |
           pip install -r requirements.txt
 
-      - name: Set environment variable for AQI API key
+      - name: Set environment variables for API Keys
         run: |
-          echo "HOPSWORKS_API_KEY =${{ secrets.HOPSWORKS_API_KEY }}" >> $GITHUB_ENV
+          echo "HOPSWORKS_API_KEY=${{ secrets.HOPSWORKS_API_KEY }}" >> $GITHUB_ENV
 
-      - name: Download and update weather and air quality data
+      - name: Run Forecast Update Script
         run: |
-          python update_data.py
-
+          python update_data.py 
