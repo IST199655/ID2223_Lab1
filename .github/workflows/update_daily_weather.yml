@@ -18,7 +18,7 @@ jobs:
 
       - name: Set environment variable for AQI API key
         run: |
-          echo "AQI_API_KEY=${{ secrets.HOPSWORKS_API_KEY }}" >> $GITHUB_ENV
+          echo "HOPSWORKS_API_KEY =${{ secrets.HOPSWORKS_API_KEY }}" >> $GITHUB_ENV
 
       - name: Download and update weather and air quality data
         run: |
