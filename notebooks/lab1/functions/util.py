@@ -31,7 +31,7 @@ def get_historical_weather(city, start_date,  end_date, latitude, longitude):
         "longitude": longitude,
         "start_date": start_date,
         "end_date": end_date,
-        "daily": ["temperature_2m_mean", "precipitation_sum", "wind_speed_10m_max", "wind_direction_10m_dominant"]
+        "daily": ["temperature_2m_max", "temperature_2m_min", "precipitation_sum", "wind_speed_10m_max", "wind_direction_10m_dominant"]
     }
     responses = openmeteo.weather_api(url, params=params)
 
@@ -44,10 +44,11 @@ def get_historical_weather(city, start_date,  end_date, latitude, longitude):
 
     # Process daily data. The order of variables needs to be the same as requested.
     daily = response.Daily()
-    daily_temperature_2m_mean = daily.Variables(0).ValuesAsNumpy()
-    daily_precipitation_sum = daily.Variables(1).ValuesAsNumpy()
-    daily_wind_speed_10m_max = daily.Variables(2).ValuesAsNumpy()
-    daily_wind_direction_10m_dominant = daily.Variables(3).ValuesAsNumpy()
+    daily_temperature_2m_max = daily.Variables(0).ValuesAsNumpy()
+    daily_temperature_2m_min = daily.Variables(1).ValuesAsNumpy()
+    daily_precipitation_sum = daily.Variables(2).ValuesAsNumpy()
+    daily_wind_speed_10m_max = daily.Variables(3).ValuesAsNumpy()
+    daily_wind_direction_10m_dominant = daily.Variables(4).ValuesAsNumpy()
 
     daily_data = {"date": pd.date_range(
         start = pd.to_datetime(daily.Time(), unit = "s"),
@@ -55,7 +56,9 @@ def get_historical_weather(city, start_date,  end_date, latitude, longitude):
         freq = pd.Timedelta(seconds = daily.Interval()),
         inclusive = "left"
     )}
-    daily_data["temperature_2m_mean"] = daily_temperature_2m_mean
+
+    daily_data["temperature_2m_max"] = daily_temperature_2m_max
+    daily_data["temperature_2m_min"] = daily_temperature_2m_min
     daily_data["precipitation_sum"] = daily_precipitation_sum
     daily_data["wind_speed_10m_max"] = daily_wind_speed_10m_max
     daily_data["wind_direction_10m_dominant"] = daily_wind_direction_10m_dominant

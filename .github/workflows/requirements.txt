@@ -2,16 +2,16 @@ requests
 pandas
 hopsworks
 
+# Feature store and model registry
+hopsworks
+
 # Resolve city names from (longitude, latitude) coordinates
 geopy==2.4.1
 
 # Read weather data. Unpinned version - if we don't update, we won't get the weather data
 openmeteo-requests
 
-
-# Plot charts
-matplotlib
-
 # Be more efficient when making REST (Http) requests
 requests-cache==1.2.0
 retry-requests==2.0.0
+

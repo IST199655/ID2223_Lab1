@@ -4,20 +4,23 @@ import pandas as pd
 import hopsworks
 import os
 import warnings
-from functions import util
+import openmeteo_requests
+import requests_cache
+import pandas as pd
+from retry_requests import retry
 
 
 ## GET THE AIR QUALITY FORECAST FOR THE NEXT DAYS
 
 # Here hopsworks key is not a secret 
 
-# with open('../../data/hopsworks-api-key.txt', 'r') as file:
-#     os.environ["HOPSWORKS_API_KEY"] = file.read().rstrip()
+with open('../../data/hopsworks-api-key.txt', 'r') as file:
+     os.environ["HOPSWORKS_API_KEY"] = file.read().rstrip()
 
 ## Here it is
 
 # Get the API key from GitHub Secrets
-HOPSWORKS_API_KEY = os.getenv('HOPSWORKS_API_KEY')
+#HOPSWORKS_API_KEY = os.getenv('HOPSWORKS_API_KEY')
 
 #Get AQI API KEY from secrets of hopsworks
 
@@ -61,33 +64,57 @@ if response.status_code == 200:
     df_forecast_aq.rename(columns={'day': 'date'}, inplace=True)
 
 
-## GET THE WEATHER FORECAST FOR THE NEXT DAYS 
+## GET THE WEATHER FORECAST FOR THE NEXT DAYS and yesterday
 
-# Coordinates of Stockholm
+
+# Setup the Open-Meteo API client with cache and retry on error
+cache_session = requests_cache.CachedSession('.cache', expire_after = 3600)
+retry_session = retry(cache_session, retries = 5, backoff_factor = 0.2)
+openmeteo = openmeteo_requests.Client(session = retry_session)
+
 latitude = 59.3293
 longitude = 18.0686
 
-# Get the current date and calculate the forecast date range (e.g., next 7 days)
-today = datetime.today().date()
-forecast_start_date = today - timedelta(days=1)
-forecast_end_date = today + timedelta(days=5)  # 7 days from today
+# Make sure all required weather variables are listed here
+# The order of variables in hourly or daily is important to assign them correctly below
+url = "https://api.open-meteo.com/v1/forecast"
+params = {
+	"latitude": latitude,
+	"longitude": longitude,
+	"daily": ["temperature_2m_max", "temperature_2m_min", "precipitation_sum", "wind_speed_10m_max", "wind_direction_10m_dominant"],
+	"past_days": 1
+}
+responses = openmeteo.weather_api(url, params=params)
 
-df_forecast_weather = util.get_hourly_weather_forecast(city, latitude, longitude)
+# Process first location. Add a for-loop for multiple locations or weather models
+response = responses[0]
+print(f"Coordinates {response.Latitude()}°N {response.Longitude()}°E")
+print(f"Elevation {response.Elevation()} m asl")
+print(f"Timezone {response.Timezone()} {response.TimezoneAbbreviation()}")
+print(f"Timezone difference to GMT+0 {response.UtcOffsetSeconds()} s")
 
-df_forecast_weather['date'] = df_forecast_weather['date'].dt.date
+# Process daily data. The order of variables needs to be the same as requested.
+daily = response.Daily()
+daily_temperature_2m_max = daily.Variables(0).ValuesAsNumpy()
+daily_temperature_2m_min = daily.Variables(1).ValuesAsNumpy()
+daily_precipitation_sum = daily.Variables(2).ValuesAsNumpy()
+daily_wind_speed_10m_max = daily.Variables(3).ValuesAsNumpy()
+daily_wind_direction_10m_dominant = daily.Variables(4).ValuesAsNumpy()
 
-df_forecast_weather['date'] = pd.to_datetime(df_forecast_weather['date'])
+daily_data = {"date": pd.date_range(
+	start = pd.to_datetime(daily.Time(), unit = "s"),
+	end = pd.to_datetime(daily.TimeEnd(), unit = "s"),
+	freq = pd.Timedelta(seconds = daily.Interval()),
+	inclusive = "left"
+)}
 
-# Group by the new 'day' column and calculate the daily average for each feature
-df_forecast_weather = df_forecast_weather.groupby('date').agg({
-    'temperature_2m_mean': 'mean',
-    'precipitation_sum': 'mean',
-    'wind_speed_10m_max': 'mean',
-    'wind_direction_10m_dominant': 'mean'
-}).reset_index()
+daily_data["temperature_2m_max"] = daily_temperature_2m_max
+daily_data["temperature_2m_min"] = daily_temperature_2m_min
+daily_data["precipitation_sum"] = daily_precipitation_sum
+daily_data["wind_speed_10m_max"] = daily_wind_speed_10m_max
+daily_data["wind_direction_10m_dominant"] = daily_wind_direction_10m_dominant
 
-df_forecast_weather = df_forecast_weather.drop(index=[9,8,7])
-
+df_forecast_weather = pd.DataFrame(data = daily_data)
 
 
 # # UPDATE THE FEATURE GROUPS
