@@ -10,4 +10,4 @@ openmeteo-requests
 
 
 # Plot charts
-matplotlib==3.8.3
+matplotlib
