@@ -9,3 +9,5 @@ geopy==2.4.1
 openmeteo-requests
 
 
+# Plot charts
+matplotlib==3.8.3
