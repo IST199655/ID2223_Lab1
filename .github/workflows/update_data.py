@@ -14,13 +14,13 @@ from retry_requests import retry
 
 # Here hopsworks key is not a secret 
 
-with open('../../data/hopsworks-api-key.txt', 'r') as file:
-     os.environ["HOPSWORKS_API_KEY"] = file.read().rstrip()
+#with open('../../data/hopsworks-api-key.txt', 'r') as file:
+#    os.environ["HOPSWORKS_API_KEY"] = file.read().rstrip()
 
 ## Here it is
 
 # Get the API key from GitHub Secrets
-#HOPSWORKS_API_KEY = os.getenv('HOPSWORKS_API_KEY')
+HOPSWORKS_API_KEY = os.getenv('HOPSWORKS_API_KEY')
 
 #Get AQI API KEY from secrets of hopsworks
 
