@@ -20,7 +20,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install -r requirements.txt
+          pip install -r .github/workflows/requirements.txt
 
       - name: Set environment variables for API Keys
         run: |
@@ -28,4 +28,4 @@ jobs:
 
       - name: Run Forecast Update Script
         run: |
-          python update_data.py 
+          python .github/workflows/update_data.py 
