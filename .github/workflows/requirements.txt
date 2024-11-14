@@ -11,3 +11,7 @@ openmeteo-requests
 
 # Plot charts
 matplotlib
+
+# Be more efficient when making REST (Http) requests
+requests-cache==1.2.0
+retry-requests==2.0.0
