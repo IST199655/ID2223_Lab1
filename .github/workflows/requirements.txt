@@ -16,3 +16,4 @@ requests-cache==1.2.0
 retry-requests==2.0.0
 
 jupyter
+xgboost
