@@ -1,5 +1,5 @@
+# Workflow 1: Update Air Quality and Weather Forecast
 name: Update Air Quality and Weather Forecast
-
 on:
   schedule:
     - cron: '0 6 * * *'  # Run daily at 6:00 UTC
@@ -20,7 +20,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install -r .github/workflows/requirements.txt
+          pip install -r requirements.txt  # Adjusted path
 
       - name: Set environment variables for API Keys
         run: |
@@ -30,6 +30,24 @@ jobs:
         run: |
           jupyter nbconvert --to notebook --execute --inplace notebooks/lab1/2.Update_daily.ipynb
 
-      - name: Run batch
+
+# Workflow 2: Push Batch Inference Changes
+name: Push Batch Inference Changes
+on:
+  push
+jobs:
+  change-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Change something
         run: |
           jupyter nbconvert --to notebook --execute --inplace notebooks/lab1/4.Batch_inference.ipynb
+
+      - name: Commit and push changes
+        uses: devops-infra/action-commit-push@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          commit_message: "Updated batch inference notebook"
