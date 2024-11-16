@@ -41,6 +41,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+
+      - name: Install dependencies
+        run: |
+          pip install -r .github/workflows/requirements.txt
+
+      - name: Set environment variables for API Keys
+        run: |
+          echo "HOPSWORKS_API_KEY=${{ secrets.HOPSWORKS_API_KEY }}" >> $GITHUB_ENV
+
       - name: Run batch inference notebook
         run: |
           jupyter nbconvert --to notebook --execute --inplace notebooks/lab1/4.Batch_inference.ipynb
