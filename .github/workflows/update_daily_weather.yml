@@ -5,12 +5,14 @@ on:
     - cron: '0 6 * * *'  # Run daily at 6:00 UTC
   workflow_dispatch:  # Allows manual trigger
 
+
 jobs:
   update_forecast:
+    name: Update Air Quality and Weather
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v2
 
       - name: Set up Python
@@ -20,29 +22,26 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install -r requirements.txt  # Adjusted path
+          pip install -r requirements.txt
 
       - name: Set environment variables for API Keys
         run: |
           echo "HOPSWORKS_API_KEY=${{ secrets.HOPSWORKS_API_KEY }}" >> $GITHUB_ENV
 
-      - name: Run update_daily
+      - name: Run update_daily notebook
         run: |
           jupyter nbconvert --to notebook --execute --inplace notebooks/lab1/2.Update_daily.ipynb
 
-
-# Workflow 2: Push Batch Inference Changes
-name: Push Batch Inference Changes
-on:
-  push
-jobs:
-  change-and-push:
+  push_changes:
+    name: Push Batch Inference Changes
     runs-on: ubuntu-latest
+    needs: update_forecast  # Ensures this job runs after `update_forecast`
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Change something
+      - name: Run batch inference notebook
         run: |
           jupyter nbconvert --to notebook --execute --inplace notebooks/lab1/4.Batch_inference.ipynb
 
@@ -50,4 +49,5 @@ jobs:
         uses: devops-infra/action-commit-push@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          commit_message: "Updated batch inference notebook"
+          commit_message: "Updated batch inference notebook after manual run"
+
