@@ -33,9 +33,9 @@ AQI_API_KEY = secrets.get_secret("AQI_API_KEY").value
 
 
 country="sweden"
-city = "stockholm"
-street = "stockholm-hornsgatan-108"
-aqicn_url="https://api.waqi.info/feed/@10009"
+city = "solna"
+street = "solna-rasundavagen-107"
+aqicn_url="https://api.waqi.info/feed/@13988"
 
 
 # Fetch air quality data from the AQICN API
@@ -72,8 +72,8 @@ cache_session = requests_cache.CachedSession('.cache', expire_after = 3600)
 retry_session = retry(cache_session, retries = 5, backoff_factor = 0.2)
 openmeteo = openmeteo_requests.Client(session = retry_session)
 
-latitude = 59.3293
-longitude = 18.0686
+latitude = 59.36056
+longitude = 17.99824
 
 # Make sure all required weather variables are listed here
 # The order of variables in hourly or daily is important to assign them correctly below
