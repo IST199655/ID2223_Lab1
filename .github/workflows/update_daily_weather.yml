@@ -26,6 +26,12 @@ jobs:
         run: |
           echo "HOPSWORKS_API_KEY=${{ secrets.HOPSWORKS_API_KEY }}" >> $GITHUB_ENV
 
-      - name: Run Forecast Update Script
+      - name: Run update_daily
         run: |
-          python .github/workflows/update_data.py 
+          jupyter nbconvert --to notebook --execute --inplace notebooks/lab1/4.Batch_inference.ipynb
+
+
+      - name: Run batch
+        run: |
+          jupyter nbconvert --to notebook --execute --inplace notebooks/lab1/4.Batch_inference.ipynb
+
