@@ -2,8 +2,8 @@ name: Update Air Quality and Weather Forecast
 
 on:
   schedule:
-    - cron: '0 6 * * *'  # Exécuter tous les jours à 6h00 UTC
-  workflow_dispatch:      # Permet aussi de déclencher manuellement
+    - cron: '0 6 * * *'  # Run daily at 6:00 UTC
+  workflow_dispatch:  # Allows manual trigger
 
 jobs:
   update_forecast:
@@ -30,26 +30,6 @@ jobs:
         run: |
           jupyter nbconvert --to notebook --execute --inplace notebooks/lab1/2.Update_daily.ipynb
 
-
       - name: Run batch
         run: |
           jupyter nbconvert --to notebook --execute --inplace notebooks/lab1/4.Batch_inference.ipynb
-        
-      - name: Push commit
-        on: push
-        permissions:
-          contents: write
-        jobs:
-          report:
-            runs-on: ubuntu-latest
-            steps:
-              - uses: actions/checkout@v3
-              - name: Create report file
-                run: date +%s > report.txt
-              - name: Commit report
-                run: |
-                  git config --global user.name 'Your Name'
-                  git config --global user.email 'your-username@users.noreply.github.com'
-                  git commit -am "Automated report"
-                  git push
-
