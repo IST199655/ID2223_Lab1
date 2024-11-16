@@ -28,7 +28,7 @@ jobs:
 
       - name: Run update_daily
         run: |
-          jupyter nbconvert --to notebook --execute --inplace notebooks/lab1/4.Batch_inference.ipynb
+          jupyter nbconvert --to notebook --execute --inplace notebooks/lab1/2.Update_daily.ipynb
 
 
       - name: Run batch
