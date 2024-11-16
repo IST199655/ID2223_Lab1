@@ -19,3 +19,4 @@ jupyter
 xgboost
 
 matplotlib
+scikit-learn
