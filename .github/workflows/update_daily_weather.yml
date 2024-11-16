@@ -34,4 +34,10 @@ jobs:
       - name: Run batch
         run: |
           jupyter nbconvert --to notebook --execute --inplace notebooks/lab1/4.Batch_inference.ipynb
+            
+      - name: Upload plot image as artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: air-quality-forecast-plot
+          path: images/pm25_hindcast_5days.png
 
