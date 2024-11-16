@@ -17,3 +17,5 @@ retry-requests==2.0.0
 
 jupyter
 xgboost
+
+matplotlib
