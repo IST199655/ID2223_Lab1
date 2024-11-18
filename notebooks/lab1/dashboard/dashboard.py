@@ -7,7 +7,7 @@ from PIL import Image
 st.title("Air Quality Forecast Dashboard (by Mathis DESERT and Diogo")
 
 # Path to your local image file
-image_path = "pm25_hindcast_5_days.png"  # Replace with your image file's name or path
+image_path = "notebooks/lab1/dashboard/pm25_hindcast_5_days.png"  # Replace with your image file's name or path
 
 # Open and display the image
 try:
