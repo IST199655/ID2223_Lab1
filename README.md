@@ -15,3 +15,7 @@ This notebook is run daily by Github Actions to update the feature stores contai
 ### 3.Training_pipeline.ipynb
 
 This notebook uses the features and labels in the feature stores to train a XGBoost model to predict air quality based on weather forecast features. This model is then saved to Hopsworks model registry and air_quality_model directory so it can be used for batch inference. In this notebook the Mean Squared Error, the R squared and the feature importances of the model are also evaluated.
+
+### 4.Batch_inference.ipynb
+
+This notebook is run daily by Github Actions to perform batch inference based on the updated feature store data (by 2. notebook), update dashboard in github and evaluate previous predictions, saving them in a feature store.
