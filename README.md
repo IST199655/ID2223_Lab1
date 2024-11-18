@@ -4,9 +4,13 @@ The goal of this lab work is to setup a Serverless ML System that Predicts Air Q
 
 The four notebooks have the following purposes:
 
-### 1.Bakcfill_features.ipynb
+### 1.Backfill_features.ipynb
 
 In this notebook, the labels needed to train the model are backfilled from historical data downloaded from [aqicn.org](https://aqicn.info) saved in a .csv within the data foulder. The features were downloaded using Open_Meteo API. The station chosen is located in Råsundavägen 107, Solna, Sweden and data backfill was downloaded on the 16th of November 2024. This notebook is run manually only once when starting up the system, creating the hopsworks feature stores used by the rest of the system.
 
 ### 2.Update_daily.ipynb
+
+This notebook is run daily by Github Actions to update the feature stores containing the features and labels, obtaining weather forecast which will be used to predict air quality in the next 7 days. The workflow which performs this action is contained in /.github/workflows/update_daily_weather.yml file.
+
+### 3.Training_pipeline.ipynb
 
