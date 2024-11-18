@@ -24,8 +24,7 @@ This notebook is run daily by Github Actions to perform batch inference based on
 
 Batch inference Dashboard can be accessed at:
 
-[Forecast](notebooks/lab1/air_quality_model/images/pm25_forecast.png)
-[Hindcast](notebooks/lab1/dashboard/pm25_hindcast_5_days.png)
+[Hindcast](https://id2223lab1-3wzmaajxejhjferptty8gw.streamlit.app/)
 
 ## Requirements
 
