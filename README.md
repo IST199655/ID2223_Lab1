@@ -19,3 +19,14 @@ This notebook uses the features and labels in the feature stores to train a XGBo
 ### 4.Batch_inference.ipynb
 
 This notebook is run daily by Github Actions to perform batch inference based on the updated feature store data (by 2. notebook), update dashboard in github and evaluate previous predictions, saving them in a feature store.
+
+## Access to dashboard
+
+Batch inference Dashboard can be accessed at:
+
+[Forecast](notebooks/lab1/air_quality_model/images/pm25_forecast.png)
+[Hindcast](notebooks/lab1/dashboard/pm25_hindcast_5_days.png)
+
+## Requirements
+
+Within /.github/workflows/requirements.txt
